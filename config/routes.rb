@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root 'angular#pages'
+  root 'pages#angular'
 
   resources :posts, only: [:create, :index, :show] do
     resources :comments, only: [:show, :create] do
