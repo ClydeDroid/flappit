@@ -14,7 +14,7 @@
           </span>
         </span>
         <span class="pull-right">
-          <small><a href="#/posts/{{posts.indexOf(post)}}">Comments</a></small>
+          <small><a href="#/posts/{{post.id}}">Comments</a></small>
         </span>
       </div>
 
@@ -23,16 +23,10 @@
         <h3>Add a new post</h3>
 
         <div class="form-group">
-          <input type="text"
-            class="form-control"
-            placeholder="Title"
-            ng-model="title"></input>
+          <input type="text" class="form-control" placeholder="Title" ng-model="title" />
         </div>
         <div class="form-group">
-          <input type="text"
-          class="form-control"
-          placeholder="Link"
-          ng-model="link"></input>
+          <input type="text" class="form-control" placeholder="Link" ng-model="link" />
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
       </form>

@@ -16,7 +16,12 @@ flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider
         .state('posts', {
             url: '/posts/{id}',
             templateUrl: '_posts.html',
-            controller: 'PostsCtrl'
+            controller: 'PostsCtrl',
+            resolve: {
+                post: ['$stateParams', 'postFactory', function($stateParams, postFactory) {
+                    return postFactory.getPost($stateParams.id);
+                }]
+            }
         });
     $urlRouterProvider.otherwise('home');
 }]);
@@ -31,7 +36,11 @@ flapper.factory('postFactory', ['$http', function ($http) {
             });
         },
         getPosts: function () { return posts; },
-        getPost: function (id) { return posts[id]; },
+        getPost: function (id) {
+            return $http.get('/posts/' + id + '.json').then(function(res){
+                return res.data;
+            });
+        },
         create: function(post) {
             return $http.post('/posts.json', post).success(function (data) {
                 posts.push(data);
@@ -40,16 +49,16 @@ flapper.factory('postFactory', ['$http', function ($http) {
         upvotePost: function(post) {
             var pid = posts.indexOf(post);
             return $http.put('/posts/' + post.id + '/upvote.json').success(function (data) {
-                posts[pid].upvotes += 1;
+                post.upvotes += 1;
             });
         },
-        commentAdd: function (id, comment) {
-            posts[id].comments.push(comment);
-            return posts[id];
+        addComment: function (id, comment) {
+            return $http.post('/posts/' + id + '/comments.json', comment);
         },
-        upvoteComment: function (pid, cid) {
-            posts[pid].comments[cid].upvotes += 1;
-            return posts[pid];
+        upvoteComment: function(post, comment) {
+            return $http.put('/posts/' + post.id + '/comments/'+ comment.id + '/upvote.json').success(function(data) {
+                comment.upvotes += 1;
+            });
         }
     };
 }]);
@@ -59,32 +68,33 @@ flapper.controller('MainCtrl', ['$scope', 'postFactory', function ($scope, postF
     $scope.posts = postFactory.getPosts();
     $scope.addPost = function () {
         if (!$scope.title || $scope.title === '') { return; }
-        $scope.posts = postFactory.create({
+        postFactory.create({
             title: $scope.title,
-            link: $scope.link
+            link: $scope.link,
+            upvotes: 0
         });
         $scope.title = '';
         $scope.link = '';
     };
     $scope.incrementUpvotes = function (post) {
-        var pid = $scope.posts.indexOf(post);
-        $scope.posts[pid] = postFactory.upvotePost(post);
+        postFactory.upvotePost(post);
     };
 }]);
 
-flapper.controller('PostsCtrl', ['$scope', '$stateParams', 'postFactory', function ($scope, $stateParams, postFactory) {
-    $scope.post = postFactory.getPost($stateParams.id);
+flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', function ($scope, postFactory, post) {
+    $scope.post = post;
     $scope.addComment = function () {
         if ($scope.body === '') { return; }
-        $scope.post = postFactory.commentAdd($stateParams.id, {
+        postFactory.addComment(post.id, {
             body: $scope.body,
             author: 'user',
             upvotes: 0
+        }).success(function(comment) {
+            $scope.post.comments.push(comment);
         });
         $scope.body = '';
     };
     $scope.incrementUpvotes = function (comment) {
-        cid = $scope.post.comments.indexOf(comment);
-        $scope.post = postFactory.upvoteComment($stateParams.id, cid);
+        postFactory.upvoteComment(post, comment);
     };
 }]);
