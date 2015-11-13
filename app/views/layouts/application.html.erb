@@ -4,8 +4,9 @@
   <title>FlapperNews</title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
+  <%= csrf_meta_tags %>
 </head>
-<body ng-app="flapperNews" class="container-fluid">
+<body ng-app="flapperNews" class="container">
 
       <div ng-include="'_nav.html'"></div>
       <ui-view></ui-view>

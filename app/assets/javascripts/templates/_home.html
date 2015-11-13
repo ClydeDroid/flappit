@@ -4,7 +4,9 @@
 
       <div ng-repeat="post in posts | orderBy:'-upvotes'">
         <div class="row">
-          <div class="col-md-11">
+        <div class="col-md-12">
+          <div class="row">
+          <div class="col-md-10">
             <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
             {{post.upvotes}}
             <span style="font-size:20px; margin-left:10px;">
@@ -16,15 +18,18 @@
               </span>
             </span>
           </div>
-          <div class="col-md-1 pull-right">
+          <div class="col-md-2 text-right">
             <small><a href="#/posts/{{post.id}}">Comments</a></small>
           </div>
+          </div>
           <div class="row">
-            <div class="col-md-2 pull-right">
+            <div class="col-md-12 text-right">
                 <small>posted by <a ng-href="#/users/{{post.user.username}}">{{post.user.username}}</a></small>
             </div>
           </div>
         </div>
+        </div>
+        <hr style="margin:3px;">
       </div>
 
       <form ng-submit="addPost()"

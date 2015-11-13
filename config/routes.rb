@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  devise_for :users
+  devise_for :users, :controllers => {sessions: 'sessions'}
   root 'pages#angular'
 
   resources :posts, only: [:create, :index, :show] do
