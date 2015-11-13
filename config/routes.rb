@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  devise_for :users
   root 'pages#angular'
 
   resources :posts, only: [:create, :index, :show] do

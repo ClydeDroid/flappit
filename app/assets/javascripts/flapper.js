@@ -1,4 +1,4 @@
-var flapper = angular.module('flapperNews', ['ui.router', 'templates']);
+var flapper = angular.module('flapperNews', ['ui.router', 'templates', 'Devise']);
 
 // Config
 flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
@@ -18,10 +18,30 @@ flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider
             templateUrl: '_posts.html',
             controller: 'PostsCtrl',
             resolve: {
-                post: ['$stateParams', 'postFactory', function($stateParams, postFactory) {
+                post: ['$stateParams', 'postFactory', function ($stateParams, postFactory) {
                     return postFactory.getPost($stateParams.id);
                 }]
             }
+        })
+        .state('login', {
+            url: '/login',
+            templateUrl: '_login.html',
+            controller: 'AuthCtrl',
+            onEnter: ['$state', 'Auth', function ($state, Auth) {
+                Auth.currentUser().then(function () {
+                    $state.go('home');
+                })
+            }]
+        })
+        .state('register', {
+            url: '/register',
+            templateUrl: '_register.html',
+            controller: 'AuthCtrl',
+            onEnter: ['$state', 'Auth', function ($state, Auth) {
+                Auth.currentUser().then(function () {
+                    $state.go('home');
+                })
+            }]
         });
     $urlRouterProvider.otherwise('home');
 }]);
@@ -96,5 +116,40 @@ flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', function ($sco
     };
     $scope.incrementUpvotes = function (comment) {
         postFactory.upvoteComment(post, comment);
+    };
+}]);
+
+flapper.controller('NavCtrl', ['$scope', 'Auth', function ($scope, Auth) {
+    $scope.signedIn = Auth.isAuthenticated;
+    $scope.logout = Auth.logout;
+    Auth.currentUser().then(function (user){
+        $scope.user = user;
+    });
+    $scope.$on('devise:new-registration', function (e, user) {
+        $scope.user = user;
+    });
+    $scope.$on('devise:login', function (e, user) {
+        $scope.user = user;
+    });
+    $scope.$on('devise:logout', function (e, user) {
+        $scope.user = {};
+    });
+}]);
+
+flapper.controller('AuthCtrl', ['$scope', '$state', 'Auth', function ($scope, $state, Auth) {
+    var config = {
+        headers: {
+            'X-HTTP-Method-Override': 'POST'
+        }
+    };
+    $scope.login = function() {
+        Auth.login($scope.user, config).then(function(){
+            $state.go('home');
+        });
+    };
+    $scope.register = function() {
+        Auth.register($scope.user, config).then(function(){
+            $state.go('home');
+        });
     };
 }]);

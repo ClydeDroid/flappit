@@ -4,3 +4,4 @@
 asset 'angular'
 asset 'angular-ui-router'
 asset 'bootstrap'
+asset 'angular-devise'

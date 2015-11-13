@@ -1576,9 +1576,12 @@
       <column name="post_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="created_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
       <column name="updated_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
+      <column name="user_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="comments_pkey" columns="id"/>
       <foreign-key name="fk_rails_2fd19c0db7" columns="post_id" ref-table="posts" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_rails_03de2dc08c" columns="user_id" ref-table="users" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="index_comments_on_post_id" unique="false" columns="post_id"/>
+      <index name="index_comments_on_user_id" unique="false" columns="user_id"/>
     </table>
     <table name="comments_id_seq" schema="public" catalog="flapper-news_development" type="SEQUENCE">
       <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
@@ -1599,8 +1602,11 @@
       <column name="upvotes" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="created_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
       <column name="updated_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
+      <column name="user_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="posts_pkey" columns="id"/>
+      <foreign-key name="fk_rails_5b5ddfd518" columns="user_id" ref-table="users" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="fk_rails_2fd19c0db7" table="comments" schema="public" catalog="flapper-news_development" columns="post_id"/>
+      <index name="index_posts_on_user_id" unique="false" columns="user_id"/>
     </table>
     <table name="posts_id_seq" schema="public" catalog="flapper-news_development" type="SEQUENCE">
       <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
@@ -1617,6 +1623,40 @@
     <table name="schema_migrations" schema="public" catalog="flapper-news_development" type="TABLE">
       <column name="version" sqlType="varchar" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
       <index name="unique_schema_migrations" unique="true" columns="version"/>
+    </table>
+    <table name="users" schema="public" catalog="flapper-news_development" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgndXNlcnNfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="email" sqlType="varchar" precision="2147483647" scale="0" nullable="false" jdbcType="12" def="Jyc="/>
+      <column name="encrypted_password" sqlType="varchar" precision="2147483647" scale="0" nullable="false" jdbcType="12" def="Jyc="/>
+      <column name="reset_password_token" sqlType="varchar" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <column name="reset_password_sent_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="remember_created_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="sign_in_count" sqlType="int4" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="current_sign_in_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="last_sign_in_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="current_sign_in_ip" sqlType="inet" precision="2147483647" scale="0" nullable="true" jdbcType="1111"/>
+      <column name="last_sign_in_ip" sqlType="inet" precision="2147483647" scale="0" nullable="true" jdbcType="1111"/>
+      <column name="created_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="updated_at" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93"/>
+      <column name="username" sqlType="varchar" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="users_pkey" columns="id"/>
+      <exported-key name="fk_rails_03de2dc08c" table="comments" schema="public" catalog="flapper-news_development" columns="user_id"/>
+      <exported-key name="fk_rails_5b5ddfd518" table="posts" schema="public" catalog="flapper-news_development" columns="user_id"/>
+      <index name="index_users_on_email" unique="true" columns="email"/>
+      <index name="index_users_on_reset_password_token" unique="true" columns="reset_password_token"/>
+      <index name="index_users_on_username" unique="true" columns="username"/>
+    </table>
+    <table name="users_id_seq" schema="public" catalog="flapper-news_development" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
     </table>
     <procedure name="RI_FKey_cascade_del" schema="pg_catalog" catalog="flapper-news_development" type="2" remarks="cmVmZXJlbnRpYWwgaW50ZWdyaXR5IE9OIERFTEVURSBDQVNDQURF">
       <prototype>
