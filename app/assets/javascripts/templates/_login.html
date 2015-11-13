@@ -2,6 +2,10 @@
     <h1>Log In</h1>
 </div>
 
+<div ng-show="error" class="alert alert-danger">
+    {{ error }}
+</div>
+
 <form ng-submit="login()">
     <div class="input-group">
         <input type="email" class="form-control" placeholder="Email" ng-model="user.email">

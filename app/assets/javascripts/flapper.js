@@ -46,6 +46,13 @@ flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider
     $urlRouterProvider.otherwise('home');
 }]);
 
+// Filters
+flapper.filter('capitalize', function() {
+    return function(input) {
+        return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    }
+});
+
 // Factories
 flapper.factory('postFactory', ['$http', function ($http) {
     var posts = [];
@@ -137,19 +144,18 @@ flapper.controller('NavCtrl', ['$scope', 'Auth', function ($scope, Auth) {
 }]);
 
 flapper.controller('AuthCtrl', ['$scope', '$state', 'Auth', function ($scope, $state, Auth) {
-    var config = {
-        headers: {
-            'X-HTTP-Method-Override': 'POST'
-        }
-    };
     $scope.login = function() {
-        Auth.login($scope.user, config).then(function(){
+        Auth.login($scope.user).then(function(){
             $state.go('home');
+        }, function(error) {
+            $scope.error = 'Invalid email address or password.';
         });
     };
     $scope.register = function() {
-        Auth.register($scope.user, config).then(function(){
+        Auth.register($scope.user).then(function(){
             $state.go('home');
+        }, function(error) {
+            $scope.errors = error.data.errors;
         });
     };
 }]);

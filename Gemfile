@@ -25,8 +25,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'bower-rails'
 gem 'angular-rails-templates'
-# gem 'angular_rails_csrf'
-gem 'activerecord-session_store'
+gem 'angular_rails_csrf'
+# gem 'activerecord-session_store'
 gem 'responders'
 gem 'sprockets', '2.12.3'
 gem 'devise', '~> 3.4.0'

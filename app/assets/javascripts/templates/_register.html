@@ -2,6 +2,12 @@
     <h1>Register</h1>
 </div>
 
+<div ng-show="errors" class="alert alert-danger">
+    <div ng-repeat="(type, error) in errors">
+        {{ type | capitalize }} {{ error[0] }}. <br>
+    </div>
+</div>
+
 <form ng-submit="register()">
     <div class="input-group">
         <input type="email" class="form-control" placeholder="Email" ng-model="user.email">
