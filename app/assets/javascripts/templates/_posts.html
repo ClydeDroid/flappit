@@ -10,14 +10,28 @@
   </div>
 
   <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
-    <span class="glyphicon glyphicon-thumbs-up"
-      ng-click="incrementUpvotes(comment)"></span>
-      {{comment.upvotes}} - by {{comment.user.username}}
-    <span style="font-size:20px; margin-left:10px;">
-      {{comment.body}}
-    </span>
+      <div class="row">
+          <div class="col-md-1 small-right-gutters small-col">
+              <div class="row">
+                  <div class="col-md-1 small-right-gutters">
+                      <div class="glyphicon glyphicon-arrow-up z-front" ng-click="addUpvote(comment)"></div>
+                      <div class="glyphicon glyphicon-arrow-down z-front" ng-click="addDownvote(comment)"></div>
+                  </div>
+                  <div class="col-md-1 vert-center">
+                      {{comment.upvotes}}
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-9 big-col vert-center">
+              {{ comment.body }}
+          </div>
+          <div class="col-md-2 text-right vert-center">
+              <small>posted by <a ng-href="#/users/{{post.user.username}}">{{ comment.user.username }}</a></small>
+          </div>
+      </div>
+      <hr style="margin:3px;">
   </div>
-  <form ng-submit="addComment()" style="margin-top:30px;">
+  <form ng-show="loggedIn()" ng-submit="addComment()" style="margin-top:30px;">
     <h3>Add a new comment</h3>
 
     <div class="form-group">
@@ -25,3 +39,9 @@
     </div>
     <button type="submit" class="btn btn-primary">Post</button>
   </form>
+
+  <br>
+
+  <div ng-hide="loggedIn()" class="alert alert-info">
+      <a href="#/login">Log in</a> or <a href="#/register">sign up</a> to add a comment!
+  </div>

@@ -74,9 +74,13 @@ flapper.factory('postFactory', ['$http', function ($http) {
             });
         },
         upvotePost: function(post) {
-            var pid = posts.indexOf(post);
             return $http.put('/posts/' + post.id + '/upvote.json').success(function (data) {
                 post.upvotes += 1;
+            });
+        },
+        downvotePost: function(post) {
+            return $http.put('/posts/' + post.id + '/downvote.json').success(function (data) {
+                post.upvotes -= 1;
             });
         },
         addComment: function (id, comment) {
@@ -86,12 +90,18 @@ flapper.factory('postFactory', ['$http', function ($http) {
             return $http.put('/posts/' + post.id + '/comments/'+ comment.id + '/upvote.json').success(function(data) {
                 comment.upvotes += 1;
             });
+        },
+        downvoteComment: function(post, comment) {
+            return $http.put('/posts/' + post.id + '/comments/'+ comment.id + '/downvote.json').success(function(data) {
+                comment.upvotes -= 1;
+            });
         }
     };
 }]);
 
 // Controllers
-flapper.controller('MainCtrl', ['$scope', 'postFactory', function ($scope, postFactory) {
+flapper.controller('MainCtrl', ['$scope', 'postFactory', 'Auth', function ($scope, postFactory, Auth) {
+    $scope.loggedIn = Auth.isAuthenticated;
     $scope.posts = postFactory.getPosts();
     $scope.addPost = function () {
         if (!$scope.title || $scope.title === '') { return; }
@@ -103,12 +113,16 @@ flapper.controller('MainCtrl', ['$scope', 'postFactory', function ($scope, postF
         $scope.title = '';
         $scope.link = '';
     };
-    $scope.incrementUpvotes = function (post) {
+    $scope.addUpvote = function (post) {
         postFactory.upvotePost(post);
+    };
+    $scope.addDownvote = function (post) {
+        postFactory.downvotePost(post);
     };
 }]);
 
-flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', function ($scope, postFactory, post) {
+flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', 'Auth', function ($scope, postFactory, post, Auth) {
+    $scope.loggedIn = Auth.isAuthenticated;
     $scope.post = post;
     $scope.addComment = function () {
         if ($scope.body === '') { return; }
@@ -121,8 +135,11 @@ flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', function ($sco
         });
         $scope.body = '';
     };
-    $scope.incrementUpvotes = function (comment) {
+    $scope.addUpvote = function (comment) {
         postFactory.upvoteComment(post, comment);
+    };
+    $scope.addDownvote = function (comment) {
+        postFactory.downvoteComment(post, comment);
     };
 }]);
 
