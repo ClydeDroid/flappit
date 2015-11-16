@@ -10,6 +10,9 @@ flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider
             resolve: {
                 postPromise: ['postFactory', function (postFactory) {
                     return postFactory.getAll();
+                }],
+                userPromise: ['Auth', function (Auth) {
+                    return Auth.currentUser();
                 }]
             }
         })
@@ -58,13 +61,13 @@ flapper.factory('postFactory', ['$http', function ($http) {
     var posts = [];
     return {
         getAll: function () {
-            return $http.get('/posts.json').success(function(data){
+            return $http.get('/posts.json').success(function(data) {
                 angular.copy(data, posts);
             });
         },
         getPosts: function () { return posts; },
         getPost: function (id) {
-            return $http.get('/posts/' + id + '.json').then(function(res){
+            return $http.get('/posts/' + id + '.json').then(function(res) {
                 return res.data;
             });
         },
@@ -74,13 +77,13 @@ flapper.factory('postFactory', ['$http', function ($http) {
             });
         },
         upvotePost: function(post) {
-            return $http.put('/posts/' + post.id + '/upvote.json').success(function (data) {
-                post.upvotes += 1;
+            return $http.post('/posts/' + post.id + '/upvote.json').success(function (data) {
+                posts[posts.indexOf(post)] = data;
             });
         },
         downvotePost: function(post) {
-            return $http.put('/posts/' + post.id + '/downvote.json').success(function (data) {
-                post.upvotes -= 1;
+            return $http.post('/posts/' + post.id + '/downvote.json').success(function (data) {
+                posts[posts.indexOf(post)] = data;
             });
         },
         addComment: function (id, comment) {
@@ -102,6 +105,13 @@ flapper.factory('postFactory', ['$http', function ($http) {
 // Controllers
 flapper.controller('MainCtrl', ['$scope', 'postFactory', 'Auth', function ($scope, postFactory, Auth) {
     $scope.loggedIn = Auth.isAuthenticated;
+    $scope.user = Auth._currentUser;
+    $scope.upvoted = function (post) {
+        return post.upvoters.indexOf($scope.user.id.toString()) > -1;
+    };
+    $scope.downvoted = function (post) {
+        return post.downvoters.indexOf($scope.user.id.toString()) > -1;
+    };
     $scope.posts = postFactory.getPosts();
     $scope.addPost = function () {
         if (!$scope.title || $scope.title === '') { return; }
@@ -146,7 +156,7 @@ flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', 'Auth', functi
 flapper.controller('NavCtrl', ['$scope', 'Auth', function ($scope, Auth) {
     $scope.signedIn = Auth.isAuthenticated;
     $scope.logout = Auth.logout;
-    Auth.currentUser().then(function (user){
+    Auth.currentUser().then(function (user) {
         $scope.user = user;
     });
     $scope.$on('devise:new-registration', function (e, user) {

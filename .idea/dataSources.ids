@@ -1603,6 +1603,8 @@
       <column name="created_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
       <column name="updated_at" sqlType="timestamp" precision="29" scale="6" nullable="false" jdbcType="93"/>
       <column name="user_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="upvoters" sqlType="_text" precision="2147483647" scale="0" nullable="true" jdbcType="2003" def="J3t9Jzo6dGV4dFtd"/>
+      <column name="downvoters" sqlType="_text" precision="2147483647" scale="0" nullable="true" jdbcType="2003" def="J3t9Jzo6dGV4dFtd"/>
       <primary-key name="posts_pkey" columns="id"/>
       <foreign-key name="fk_rails_5b5ddfd518" columns="user_id" ref-table="users" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="fk_rails_2fd19c0db7" table="comments" schema="public" catalog="flapper-news_development" columns="post_id"/>

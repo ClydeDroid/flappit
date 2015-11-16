@@ -1,13 +1,13 @@
 <div class="page-header" style="margin-bottom:2px;">
-    <h1>Flapper</h1>
+    <h1>Flappit</h1>
 </div>
 <div ng-repeat="post in posts | orderBy:'-upvotes'">
     <div class="row">
         <div class="col-md-1 small-right-gutters small-col">
             <div class="row">
                 <div class="col-md-1 small-right-gutters">
-                    <div class="glyphicon glyphicon-arrow-up z-front" ng-click="addUpvote(post)"></div>
-                    <div class="glyphicon glyphicon-arrow-down z-front" ng-click="addDownvote(post)"></div>
+                    <div class="glyphicon glyphicon-arrow-up z-front" ng-class="{orangeRed: upvoted(post)}" ng-click="addUpvote(post)"></div>
+                    <div class="glyphicon glyphicon-arrow-down z-front" ng-class="{dodgerBlue: downvoted(post)}" ng-click="addDownvote(post)"></div>
                 </div>
                 <div class="col-md-1 vert-center">
                     {{post.upvotes}}
