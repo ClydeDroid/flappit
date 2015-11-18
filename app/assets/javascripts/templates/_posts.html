@@ -14,8 +14,8 @@
           <div class="col-md-1 small-right-gutters small-col">
               <div class="row">
                   <div class="col-md-1 small-right-gutters">
-                      <div class="glyphicon glyphicon-arrow-up z-front" ng-click="addUpvote(comment)"></div>
-                      <div class="glyphicon glyphicon-arrow-down z-front" ng-click="addDownvote(comment)"></div>
+                      <div class="glyphicon glyphicon-arrow-up z-front" ng-class="{orangeRed: upvoted(comment)}" ng-click="addUpvote(comment)"></div>
+                      <div class="glyphicon glyphicon-arrow-down z-front" ng-class="{dodgerBlue: downvoted(comment)}" ng-click="addDownvote(comment)"></div>
                   </div>
                   <div class="col-md-1 vert-center">
                       {{comment.upvotes}}

@@ -8,23 +8,26 @@ flapper.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider
             templateUrl: '_home.html',
             controller: 'MainCtrl',
             resolve: {
-                postPromise: ['postFactory', function (postFactory) {
-                    return postFactory.getAll();
-                }],
-                userPromise: ['Auth', function (Auth) {
-                    return Auth.currentUser();
+                postsPromise: ['postFactory', function (postFactory) {
+                    return postFactory.loadPosts();
                 }]
-            }
+            },
+            onEnter: ['Auth', function (Auth) {
+                Auth.currentUser()
+            }]
         })
         .state('posts', {
             url: '/posts/{id}',
             templateUrl: '_posts.html',
             controller: 'PostsCtrl',
             resolve: {
-                post: ['$stateParams', 'postFactory', function ($stateParams, postFactory) {
-                    return postFactory.getPost($stateParams.id);
+                postPromise: ['$stateParams', 'postFactory', function ($stateParams, postFactory) {
+                    return postFactory.loadPost($stateParams.id);
                 }]
-            }
+            },
+            onEnter: ['Auth', function (Auth) {
+                Auth.currentUser()
+            }]
         })
         .state('login', {
             url: '/login',
@@ -59,19 +62,21 @@ flapper.filter('capitalize', function() {
 // Factories
 flapper.factory('postFactory', ['$http', function ($http) {
     var posts = [];
+    var post = {};
     return {
-        getAll: function () {
+        loadPosts: function () {
             return $http.get('/posts.json').success(function(data) {
                 angular.copy(data, posts);
             });
         },
         getPosts: function () { return posts; },
-        getPost: function (id) {
-            return $http.get('/posts/' + id + '.json').then(function(res) {
-                return res.data;
+        loadPost: function (id) {
+            return $http.get('/posts/' + id + '.json').success(function(data) {
+                angular.copy(data, post);
             });
         },
-        create: function(post) {
+        getPost: function () { return post; },
+        addPost: function(post) {
             return $http.post('/posts.json', post).success(function (data) {
                 posts.push(data);
             });
@@ -89,14 +94,14 @@ flapper.factory('postFactory', ['$http', function ($http) {
         addComment: function (id, comment) {
             return $http.post('/posts/' + id + '/comments.json', comment);
         },
-        upvoteComment: function(post, comment) {
-            return $http.put('/posts/' + post.id + '/comments/'+ comment.id + '/upvote.json').success(function(data) {
-                comment.upvotes += 1;
+        upvoteComment: function(comment) {
+            return $http.post('/posts/' + post.id + '/comments/'+ comment.id + '/upvote.json').success(function(data) {
+                post.comments[post.comments.indexOf(comment)] = data;
             });
         },
-        downvoteComment: function(post, comment) {
-            return $http.put('/posts/' + post.id + '/comments/'+ comment.id + '/downvote.json').success(function(data) {
-                comment.upvotes -= 1;
+        downvoteComment: function(comment) {
+            return $http.post('/posts/' + post.id + '/comments/'+ comment.id + '/downvote.json').success(function(data) {
+                post.comments[post.comments.indexOf(comment)] = data;
             });
         }
     };
@@ -115,7 +120,7 @@ flapper.controller('MainCtrl', ['$scope', 'postFactory', 'Auth', function ($scop
     $scope.posts = postFactory.getPosts();
     $scope.addPost = function () {
         if (!$scope.title || $scope.title === '') { return; }
-        postFactory.create({
+        postFactory.addPost({
             title: $scope.title,
             link: $scope.link,
             upvotes: 0
@@ -131,12 +136,19 @@ flapper.controller('MainCtrl', ['$scope', 'postFactory', 'Auth', function ($scop
     };
 }]);
 
-flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', 'Auth', function ($scope, postFactory, post, Auth) {
+flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'Auth', function ($scope, postFactory, Auth) {
     $scope.loggedIn = Auth.isAuthenticated;
-    $scope.post = post;
+    $scope.user = Auth._currentUser;
+    $scope.upvoted = function (comment) {
+        return comment.upvoters.indexOf($scope.user.id.toString()) > -1;
+    };
+    $scope.downvoted = function (comment) {
+        return comment.downvoters.indexOf($scope.user.id.toString()) > -1;
+    };
+    $scope.post = postFactory.getPost();
     $scope.addComment = function () {
         if ($scope.body === '') { return; }
-        postFactory.addComment(post.id, {
+        postFactory.addComment($scope.post.id, {
             body: $scope.body,
             author: 'user',
             upvotes: 0
@@ -146,10 +158,10 @@ flapper.controller('PostsCtrl', ['$scope', 'postFactory', 'post', 'Auth', functi
         $scope.body = '';
     };
     $scope.addUpvote = function (comment) {
-        postFactory.upvoteComment(post, comment);
+        postFactory.upvoteComment(comment);
     };
     $scope.addDownvote = function (comment) {
-        postFactory.downvoteComment(post, comment);
+        postFactory.downvoteComment(comment);
     };
 }]);
 
