@@ -1,6 +1,9 @@
 {
   "name": "bower-rails generated vendor assets",
   "dependencies": {
-
+    "angular": "latest",
+    "angular-ui-router": "latest",
+    "bootstrap": "latest",
+    "angular-devise": "latest"
   }
 }
