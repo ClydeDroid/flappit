@@ -1,0 +1,47 @@
+.page-header[style="margin-bottom:2px;"]
+  h1
+    | Flappit
+div[ng-repeat="post in posts | orderBy:'-upvotes'"]
+  .row
+    .col-md-1.small-right-gutters.small-col
+      .row
+        .col-md-1.small-right-gutters
+          .glyphicon.glyphicon-arrow-up.z-front[ng-class="{orangeRed: upvoted(post)}" ng-click="addUpvote(post)"]
+          .glyphicon.glyphicon-arrow-down.z-front[ng-class="{dodgerBlue: downvoted(post)}" ng-click="addDownvote(post)"]
+        .col-md-1.vert-center
+          |  {{post.upvotes}} 
+    .col-md-9.big-col.post-title.vert-center
+      a[ng-show="post.link" href="{{post.link}}"]
+        |  {{post.title}} 
+      span[ng-hide="post.link"]
+        |  {{post.title}} 
+    .col-md-2.text-right
+      div
+        small
+          a[href="#/posts/{{post.id}}"]
+            | {{ post.comments.length }} comment
+            span[ng-hide="post.comments.length==1"]
+              | s
+      div
+        small
+          | posted by 
+          a[ng-href="#/users/{{post.user.username}}"]
+            | {{post.user.username}}
+  hr[style="margin:3px;"]
+form[ng-show="loggedIn()" ng-submit="addPost()" style="margin-top:30px;"]
+  h3
+    | Add a new post
+  .form-group
+    input.form-control[type="text" placeholder="Title" ng-model="title"]
+  .form-group
+    input.form-control[type="text" placeholder="Link" ng-model="link"]
+  button.btn.btn-primary[type="submit"]
+    | Post
+br
+.alert.alert-info[ng-hide="loggedIn()"]
+  a[href="#/login"]
+    | Log in
+  |  or 
+  a[href="#/register"]
+    | sign up
+  |  to add a post! 

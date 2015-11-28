@@ -1,0 +1,15 @@
+.page-header
+  h1
+    | Register
+.alert.alert-danger[ng-show="errors"]
+  div[ng-repeat="(type, error) in errors"]
+    |  {{ type | capitalize }} {{ error[0] }}. 
+    br
+form[ng-submit="register()"]
+  .input-group
+    input.form-control[type="email" placeholder="Email" ng-model="user.email"]
+  .input-group
+    input.form-control[type="text" placeholder="Username" ng-model="user.username"]
+  .input-group
+    input.form-control[type="password" placeholder="Password" ng-model="user.password"]
+  input.btn.btn-default[type="submit" value="Register"]

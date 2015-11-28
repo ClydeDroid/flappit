@@ -1,0 +1,17 @@
+.collapse.navbar-collapse.pull-right[ng-controller="NavCtrl"]
+  ul.nav.navbar-nav
+    li
+      a[href="#/home"]
+        | Home
+    li[ng-hide="signedIn()"]
+      a[href="#/login"]
+        | Log In
+    li[ng-hide="signedIn()"]
+      a[href="#/register"]
+        | Register
+    li[ng-show="signedIn()"]
+      a[href="#/"]
+        | {{ user.username }}
+    li[ng-show="signedIn()"]
+      a[ng-click="logout()"]
+        | Log Out

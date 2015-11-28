@@ -1,0 +1,38 @@
+.page-header
+  h3
+    a[ng-show="post.link" href="{{post.link}}"]
+      |  {{post.title}} 
+    span[ng-hide="post.link"]
+      |  {{post.title}} 
+div[ng-repeat="comment in post.comments | orderBy:'-upvotes'"]
+  .row
+    .col-md-1.small-right-gutters.small-col
+      .row
+        .col-md-1.small-right-gutters
+          .glyphicon.glyphicon-arrow-up.z-front[ng-class="{orangeRed: upvoted(comment)}" ng-click="addUpvote(comment)"]
+          .glyphicon.glyphicon-arrow-down.z-front[ng-class="{dodgerBlue: downvoted(comment)}" ng-click="addDownvote(comment)"]
+        .col-md-1.vert-center
+          |  {{comment.upvotes}} 
+    .col-md-9.big-col.vert-center
+      |  {{ comment.body }} 
+    .col-md-2.text-right.vert-center
+      small
+        | posted by 
+        a[ng-href="#/users/{{post.user.username}}"]
+          | {{ comment.user.username }}
+  hr[style="margin:3px;"]
+form[ng-show="loggedIn()" ng-submit="addComment()" style="margin-top:30px;"]
+  h3
+    | Add a new comment
+  .form-group
+    input.form-control[type="text" placeholder="Comment" ng-model="body"]
+  button.btn.btn-primary[type="submit"]
+    | Post
+br
+.alert.alert-info[ng-hide="loggedIn()"]
+  a[href="#/login"]
+    | Log in
+  |  or 
+  a[href="#/register"]
+    | sign up
+  |  to add a comment! 

@@ -23,13 +23,15 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# gem 'activerecord-session_store'
+
 gem 'bower-rails'
 gem 'angular-rails-templates'
 gem 'angular_rails_csrf'
-# gem 'activerecord-session_store'
 gem 'responders'
 gem 'sprockets', '2.12.3'
 gem 'devise', '~> 3.4.0'
+gem 'slim-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
