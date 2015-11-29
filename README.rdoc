@@ -3,4 +3,10 @@
 A fully functional Reddit clone built using Rails and Angular. Based heavily on the guide at https://thinkster.io/angular-rails, I added my own spin by
 using Slim for HTML templates and by only allowing each user to post once.
 
-You can check it out by going to http://flappit.herokuapp.com/ or by cloning this repo, running <tt>rake db:create</tt> and <tt>rake db:migrate</tt>, and starting up a server.
+You can check it out by going to http://flappit.herokuapp.com. Or if you're feeling adventurous, clone this repo and run:
+
+* <tt>bundle install</tt>
+* <tt>rake bower:install</tt>
+* <tt>rake db:create</tt>
+* <tt>rake db:migrate</tt>
+* <tt>rails server</tt>
